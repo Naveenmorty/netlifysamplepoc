@@ -1,0 +1,74 @@
+trigger:
+- main
+
+parameters:
+  - name: environment
+    type: string
+    default: dev
+    values:
+      - dev
+      - stg
+      - prod
+
+variables:
+  environment: ${{ parameters.environment }}
+
+stages:
+- stage: Dev
+  displayName: Deploy to Dev Environment
+  condition: eq(variables['environment'], 'dev') # Run only if environment is "dev"
+  jobs:
+  - job: DeployDev
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: 'drop'
+        path: '$(Pipeline.Workspace)/artifacts'
+
+    - script: |
+        netlify deploy --dir=$(Pipeline.Workspace)/artifacts/drop --auth=$(NETLIFY_AUTH_TOKEN_DEV) --site=$(NETLIFY_SITE_ID_DEV) --message "Dev Deployment"
+      displayName: 'Deploy to Netlify (Dev)'
+
+    - script: |
+        echo "Deploying to Dev environment"
+      displayName: "Deploy to Dev"
+
+- stage: Stg
+  displayName: Deploy to Staging Environment
+  condition: eq(variables['environment'], 'stg') # Run only if environment is "stg"
+  dependsOn: Dev
+  jobs:
+  - job: DeployStg
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: 'drop'
+        path: '$(Pipeline.Workspace)/artifacts'
+
+    - script: |
+        netlify deploy --dir=$(Pipeline.Workspace)/artifacts/drop --auth=$(NETLIFY_AUTH_TOKEN_STG) --site=$(NETLIFY_SITE_ID_STG) --message "Staging Deployment"
+      displayName: 'Deploy to Netlify (Staging)'
+
+    - script: |
+        echo "Deploying to Staging environment"
+      displayName: "Deploy to Staging"
+
+- stage: Prod
+  displayName: Deploy to Production Environment
+  condition: eq(variables['environment'], 'prod') # Run only if environment is "prod"
+  dependsOn: Stg
+  jobs:
+  - job: DeployProd
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: 'drop'
+        path: '$(Pipeline.Workspace)/artifacts'
+
+    - script: |
+        netlify deploy --dir=$(Pipeline.Workspace)/artifacts/drop --auth=$(NETLIFY_AUTH_TOKEN_PROD) --site=$(NETLIFY_SITE_ID_PROD) --message "Production Deployment"
+      displayName: 'Deploy to Netlify (Production)'
+
+    - script: |
+        echo "Deploying to Production environment"
+      displayName: "Deploy to Production"
