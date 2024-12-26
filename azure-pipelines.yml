@@ -5,10 +5,8 @@ parameters:
   - name: environment
     type: string
     default: dev
-    values:
-      - dev
-      - stg
-      - prod
+    values: 
+    - $(ENV_VAR)
 
 variables:
   environment: ${{ parameters.environment }}
