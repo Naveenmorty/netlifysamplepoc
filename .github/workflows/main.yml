@@ -23,6 +23,10 @@ jobs:
     # Install dependencies
     - name: Install dependencies
       run: npm install
+      
+    # Install Netlify CLI
+    - name: Install Netlify CLI
+      run: npm install -g netlify-cli
 
     # Build the project
     - name: Build the project
