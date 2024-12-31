@@ -35,7 +35,7 @@ jobs:
     # Deploy to Netlify
     - name: Deploy to Netlify
       run: |
-        npx netlify deploy --dir=dist --auth=$NETLIFY_AUTH_TOKEN --site=$NETLIFY_SITE_ID --message "GitHub Actions Deployment"
+        npx netlify deploy --dir=dist --auth=nfp_dATR9nw3KVQe4oEfv3U6YpENVMx4cfCta6c6 --site=43e53a9b-dc8c-435e-95f9-b4312e0615bc --message "GitHub Actions Deployment"
       env:
         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
